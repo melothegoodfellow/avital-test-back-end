@@ -1,5 +1,6 @@
 //Modified sequelize config.json
 //Committed .env file for demo purpose must not commit it
+//One .env file per environment i.e Dev, Prod, Staging
 
 //to run the migrations do the following steps
 1. cd database
