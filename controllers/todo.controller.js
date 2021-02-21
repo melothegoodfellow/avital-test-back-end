@@ -17,11 +17,11 @@ async function getTodos(userId){
     }
 }
 
-async function saveTodo(data){
+async function saveTodo(data, userId){
     try {
         return await Todo.create({
             description: data.description,
-            user_id: data.user_id
+            user_id: userId
         });
     }
     catch(error){
@@ -29,14 +29,14 @@ async function saveTodo(data){
     }
 }
 
-async function editTodo(data){
+async function editTodo(data, userId){
     try {
         return await Todo.update({
             description: data.description
         }, {
             where: {
                 id: data.id,
-                user_id: data.user_id
+                user_id: userId
             }
         });
     }
@@ -45,27 +45,12 @@ async function editTodo(data){
     }
 }
 
-async function editTodo(data){
-    try {
-        return await Todo.update({
-            description: data.description
-        }, {
-            where: {
-                id: data.id,
-                user_id: data.user_id
-            }
-        });
-    }
-    catch(error){
-        console.log("todos failed "+error);
-    }
-}
-
-async function deleteTodo(todoId){
+async function deleteTodo(todoId, userId){
     try {
         return await Todo.destroy({
             where: {
-                id: todoId
+                id: todoId,
+                user_id: userId
             }
         });
     }
@@ -74,13 +59,14 @@ async function deleteTodo(todoId){
     }
 }
 
-async function completeTodo(todoId){
+async function completeTodo(todoId, userId){
     try {
         return await Todo.update({
             is_complete: true
         }, {
             where: {
-                id: todoId
+                id: todoId,
+                user_id: userId
             }
         });
     }

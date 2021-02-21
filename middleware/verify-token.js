@@ -1,14 +1,18 @@
 const responseHandler = require("./response-handler");
+const { decodeToken } = require("../library/jwt");
 
 module.exports = function(req, res, next){
-    // console.log(req.headers.authorization);
-    if(!req.headers.authorization)
+    if(!req.headers.authorization) {
         return responseHandler(res, 401, {
             data: [],
             message: "unautorized",
             status: "failed",
             error: []
         });
-    else
+    }
+    else{
+        const tokenData = decodeToken(req.headers.authorization.split(' ')[1]);
+        req.userId = tokenData.userId;
         next();
+    }
 }

@@ -17,24 +17,31 @@ authRoutes.post("/signup", async function(req, res){
     .single("photo");
     upload(req, res, async (error) => {
         if(error){
-            console.log("error", error);
-            if(error.includes("File too large")){
-                return responseHandler(res, 200, {
+            if(error.code === "LIMIT_FILE_SIZE"){
+                return responseHandler(res, 413, {
                     data: [],
-                    message: "File too large",
+                    message: "Image upload should be below 1 MB",
                     status: "User not created",
                     error: []
                 });
             }
             console.log("error", error);
         }
-        const user = await userCtrl.signup({
+        const data = await userCtrl.signup({
             username: req.body.username,
             password: req.body.password,
             photo: req.file.filename,
         });
+        if(data.error){
+            return responseHandler(res, data.code , {
+                data: [],
+                message: data.message,
+                status: "",
+                error: []
+            });
+        }
         responseHandler(res, 200, {
-            data: user,
+            data: data,
             message: "",
             status: "",
             error: []
@@ -44,13 +51,21 @@ authRoutes.post("/signup", async function(req, res){
 });
 
 authRoutes.post("/login", async function(req, res){
-    const user = await userCtrl.login(req.body.username, req.body.password);
+    const data = await userCtrl.login(req.body.username, req.body.password);
+    if(data.error){
+        return responseHandler(res, data.code, {
+            data: [],
+            message: data.message,
+            status: "success",
+            error: []
+        });
+    }
     return responseHandler(res, 200, {
-                data: user,
-                message: "user logged in",
-                status: "success",
-                error: []
-            });
+        data: data,
+        message: "user logged in",
+        status: "success",
+        error: []
+    });
 });
 
 module.exports = {

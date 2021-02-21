@@ -18,6 +18,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use("/auth", authRoutes);
+app.use(express.static("uploads"));
 app.use(verifyToken);
 app.use("/todo", todoRoutes);
 

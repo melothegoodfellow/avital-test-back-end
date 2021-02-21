@@ -9,12 +9,14 @@ const { getToken } = require("../library/jwt");
 async function login(username, password){
     try {
         const userData = await User.findOne({ where: { username: username } });
-        // if(userData)
         if(!passwordCompare(password, userData.password))
-            return null;
+            return {
+                error: true,
+                code: 401,
+                message: "wrong password"
+            };
         const token = getToken(userData.id);
         return {
-            id: userData.id,
             username: userData.username,
             photo: userData.photo,
             token: token
@@ -36,16 +38,13 @@ async function signup(data){
                 photo: data.photo
             }
         });
-        // console.log("created", created);
-        // if(!created){
-        //     return {
-        //         message: "username already present"
-        //     }
-        // }
-        if(!passwordCompare(data.password, userData.password))
+        if(!created){
             return {
-                message: "password incorrect"
+                error: true,
+                code: 409,
+                message: "username already exist"
             };
+        }
         const token = getToken(userData.id);
         return {
             id: userData.id,
@@ -58,8 +57,6 @@ async function signup(data){
         console.log("user check "+error);
     }
 }
-
-
 
 module.exports = {
     login,
